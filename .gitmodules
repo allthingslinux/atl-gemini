@@ -1,0 +1,3 @@
+[submodule "gemserv"]
+	path = gemserv
+	url = https://git.sr.ht/~int80h/gemserv
