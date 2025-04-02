@@ -1,0 +1,1 @@
+this repository contains a prototype gemini capsule for All Things Linux. until further notice, consider it licensed All Rights Reserved, though a license will be added if we decide to move forward with this as a project.

@@ -1,0 +1,61 @@
+```
+      ___                               
+     /  /\          ___                 
+    /  /::\        /  /\                
+   /  /:/\:\      /  /:/    ___     ___ 
+  /  /:/~/::\    /  /:/    /__/\   /  /\
+ /__/:/ /:/\:\  /  /::\    \  \:\ /  /:/
+ \  \:\/:/__\/ /__/:/\:\    \  \:\  /:/ 
+  \  \::/      \__\/  \:\    \  \:\/:/  
+   \  \:\           \  \:\    \  \::/   
+    \  \:\           \__\/     \__\/    
+     \__\/                              
+```
+# Let's build the future of Linux together
+## All Things Linux is a 501(c)(3) non-profit organization with a mission to empower the Linux ecosystem through education, collaboration, and support.
+
+=> https://discord.gg/linux All Things Linux Discord
+Join our server to make new friends, share your knowledge and learn.
+=> gemini://allthingslinux.org/about.gmi About ATL
+
+## See what our members are saying
+
+Join our growing community of Linux enthusiasts to discover what they love about being part of our network.
+
+* Jensen: "This is awesome, actually. I've learned a ton and met some of the best people here."
+* Elena: "Friendly, helpful, diverse, and dedicated community. Highly recommend!"
+* Theo: "The best place to connect with fellow enthusiasts and professionals."
+* Fin: "The sense of community here is honestly irreplaceable."
+
+## Explore our ecosystem
+
+As our organization grows, we continue to develop new and exciting projects through community collaboration.
+
+=> https://atl.wiki ATL Wiki
+=> https://discord.gg/linux ATL Discord
+=> https://atl.tools ATL Tools
+=> https://atl.dev ATL Dev
+=> https://atl.chat ATL Chats
+=> https://tux.atl.tools/ Tux
+
+## Our community by the numbers
+
+* 5.5M+ messages
+* 7.5K+ members
+* 40K+ voice hours
+* 30+ staff members
+* 600+ support threads
+* 6+ projects
+
+## Support our Community
+
+All Things Linux is a community-driven project. Your donations help maintain services and infrastructure.
+
+=> https://opencollective.com/allthingslinux
+
+---
+
+=> https://www.iubenda.com/privacy-policy/97069484/full-legal Privacy Policy
+=> https://www.iubenda.com/terms-and-conditions/97069484 Terms and Conditions
+=> https://www.iubenda.com/privacy-policy/97069484/cookie-policy Cookie Policy
+© 2025 All Things Linux - All Rights Reserved

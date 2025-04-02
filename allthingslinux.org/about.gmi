@@ -1,0 +1,50 @@
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ● ● ●                            tux@atl ~                                   │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ $ cat allthingslinux.txt                                                     │
+│                           About Our Organization                             │
+│                                                                              │
+│  Fostering a vibrant community of Linux enthusiasts through                  │
+│  education, collaboration, and support.                                      │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+###~/Our Community
+We are a diverse community of over 7,500 Linux enthusiasts, passionate about advancing technology and sharing knowledge. Our organization is dedicated to promoting the spirit and growth of Linux through collaboration and innovation.
+
+###~/Our Values
+At the core of All Things Linux is our commitment to inclusivity and diversity. Our code of conduct ensures everyone feels welcome, regardless of background or skill level. We value different perspectives and foster a supportive environment for learning and growth
+
+###~/Our Mission
+We develop tools, create self-hosted projects, and curate educational resources that enrich the Linux ecosystem. Through these efforts, we aim to enhance user experiences and make Linux more accessible to newcomers.
+
+###~/Our Future
+As a 501(c)(3) nonprofit, we prioritize transparency and community-driven decisions. Our ongoing development includes Discord bots, wikis, and self-hosted tools. Join us as we explore possibilities and contribute to the future of open-source technology.
+
+## Our Values
+* Community
+  We connect over 5,000 Linux enthusiasts through collaboration and knowledge sharing. Our regular events allow members to demonstrate their skills, with prizes enhancing a spirit of friendly competition.
+  
+* Mutual Respect
+  Mutual respect is key as outlined in our Code of Conduct, stressing the importance of treating everyone with kindness and consideration, free from discrimination.
+  
+* Inclusivity
+  We are committed to creating an environment where all members, irrespective of their background, differences, or skills, feel welcomed and empowered to engage in meaningful discussions.
+  
+* Collaboration
+  Our community thrives on collaboration, fostering creative teamwork and open-source contributions. We engage in collaborative projects including our wiki, Discord bot, and self-hosted tools.
+  
+* Support
+  We offer a dedicated space for members to seek help and guidance, with experienced users actively responding in our support forums. We aim to cultivate a culture of understanding.
+  
+* Education
+  Learning and growth are our priorities. We encourage members to share their knowledge, resources, and insights, particularly in our support forums and educational channels.
+  
+* Integrity
+  Accountability and honesty are essential to our community, with both staff and members encouraged to acknowledge and learn from their mistakes. Our commitment to integrity sets us apart.
+  
+* Transparency
+  Openness in community operations is vital, including accessible moderation logs, transparent spending, and regular community decision voting. We believe that transparency fosters trust.
+  
+* Code of Conduct
+  Our Code of Conduct outlines the standards for interaction in our community. Please read our guidelines to understand your role in upholding our community values.
