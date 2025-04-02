@@ -1,7 +1,6 @@
 services:
   gemserv:
     build: ./gemserv
-    image: gemserv
     ports:
       - 1965
     volumes:
