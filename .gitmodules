@@ -1,3 +1,6 @@
 [submodule "gemserv"]
 	path = gemserv
 	url = https://git.sr.ht/~int80h/gemserv
+[submodule "code-of-conduct"]
+	path = code-of-conduct
+	url = https://github.com/allthingslinux/code-of-conduct
