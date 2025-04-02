@@ -1,0 +1,34 @@
+port = 1965
+log = "info"
+#sets gemserv to use both ipv4 and ipv6
+host = "::"
+
+# allthingslinux.org
+[[server]]
+hostname = "allthingslinux.org"
+cert = "/certs/allthingslinux.org/cert.pem"
+key = "/certs/allthingslinux.org/key.pem"
+dir = "/gemroots/allthingslinux.org/"
+index = "index.gmi"
+lang = "en"
+# cgi is disabled until we have scripts to use for it. make a cgi-bin dir and point this at it when we do.
+cgi = "false"
+cgipath = ""
+#cgienv = {"envvar" = "value"}
+#proxy = {}
+#redirect = {}
+
+# atl.tools
+[[server]]
+hostname = "atl.tools"
+cert = "/certs/atl.tools/cert.pem"
+key = "/certs/atl.tools/key.pem"
+dir = "/gemroots/atl.tools/"
+index = "index.gmi"
+lang = "en"
+# cgi is disabled until we have scripts to use for it. make a cgi-bin dir and point this at it when we do.
+cgi = "false"
+cgipath = ""
+#cgienv = {"envvar" = "value"}
+#proxy = {}
+#redirect = {}
