@@ -1,6 +1,6 @@
 services:
   gemserv:
-    build: https://git.sr.ht/~int80h/gemserv.git
+    build: ./gemserv
     image: gemserv
     ports:
       - 1965
