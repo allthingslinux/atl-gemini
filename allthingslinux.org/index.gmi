@@ -1,15 +1,15 @@
 ```
-      ___                               
-     /  /\          ___                 
-    /  /::\        /  /\                
-   /  /:/\:\      /  /:/    ___     ___ 
+      ___
+     /  /\          ___
+    /  /::\        /  /\
+   /  /:/\:\      /  /:/    ___     ___
   /  /:/~/::\    /  /:/    /__/\   /  /\
  /__/:/ /:/\:\  /  /::\    \  \:\ /  /:/
- \  \:\/:/__\/ /__/:/\:\    \  \:\  /:/ 
-  \  \::/      \__\/  \:\    \  \:\/:/  
-   \  \:\           \  \:\    \  \::/   
-    \  \:\           \__\/     \__\/    
-     \__\/                              
+ \  \:\/:/__\/ /__/:/\:\    \  \:\  /:/
+  \  \::/      \__\/  \:\    \  \:\/:/
+   \  \:\           \  \:\    \  \::/
+    \  \:\           \__\/     \__\/
+     \__\/
 ```
 # Let's build the future of Linux together
 ## All Things Linux is a 501(c)(3) non-profit organization with a mission to empower the Linux ecosystem through education, collaboration, and support.
@@ -33,7 +33,7 @@ As our organization grows, we continue to develop new and exciting projects thro
 
 => https://atl.wiki ATL Wiki
 => https://discord.gg/linux ATL Discord
-=> https://atl.tools ATL Tools
+=> gemini://atl.tools ATL Tools
 => https://atl.dev ATL Dev
 => https://atl.chat ATL Chats
 => https://tux.atl.tools/ Tux
