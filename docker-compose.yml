@@ -1,0 +1,11 @@
+services:
+  gemserv:
+    build: https://git.sr.ht/~int80h/gemserv.git
+    image: gemserv
+    ports:
+      - 1965
+    volumes:
+      - ./allthingslinux.org:/gemroots/allthingslinux.org
+      - ./atl.tools:/gemroots/atl.tools
+      - ./gemserv:/gemserv
+      - ./certs:/certs
