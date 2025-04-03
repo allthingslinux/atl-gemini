@@ -1,7 +1,7 @@
-from copyreg import clear_extension_cache
 import re
 import textwrap
 
+# Hardcoded header and footer to replace the html ones
 heading=[
 r'```'+"\n"
 r'  _____        __      ____  ___  _____             __         __ '+"\n"
@@ -15,6 +15,8 @@ footing=[
     r'=> https://contrib.rocks Made with contrib.rocks'+"\n"
     r'=> https://contrib.rocks/image?repo=allthingslinux/code-of-conduct Contributors'+"\n"
 ]
+
+# Grab the file, then split it into a 2D list for ease of manipulation
 coc = open("./code-of-conduct/README.md").read().splitlines(True)
 
 # Find the end of the table of contents and delete everything up to that point
@@ -38,34 +40,40 @@ table_start_index = 0   # point to delete from and then insert the new formatted
 # Main recursive modifier. reformats single-line links and strips out inline formatting.
 for index, line in enumerate(coc):
     if in_table:
-        if line.startswith("|"):
-            cleanline = line[0:2]+pattern.sub(lambda match: replacements[match.group(0)], line[2:])
+        if line.startswith("|"): #if we're still in the table, move this line into the table buffer and iterate to the next.
+            #strip inline markdown and the beginning of the table ("| ") from the line
+            cleanline = line[0:2]+pattern.sub(lambda match: replacements[match.group(0)], line[2:]) 
             current_table.append(cleanline[2:len(cleanline)-2].split(" | "))
         else:
             # We have the whole table! all done iterating!
             in_table = False
             del coc[table_start_index:(table_start_index+len(current_table))]   # Remove this section from the document
+            # Final cleaning and formatting steps for the table data. strip extraneous spaces, wrap the text.
             clean_table = []
             column_width = max(len(column.strip()) for column in current_table[0])
             for x, y in enumerate(current_table):               # strips the seperating line 
                 if not all( char == '-' for char in y[0]):      # Check if first column of row is all dashes. strip row if yes.
                     clean0 = y[0].strip() # Generate cleaned version of columns 0 and 1
                     clean1 = y[1].strip()
-                    if len(clean1) > 75-column_width:
+                    if len(clean1) > 75-column_width: 
                         wrapped_text = textwrap.wrap(clean1, width=60)
                         clean_table.append([clean0, wrapped_text[0]])
                         for segment in wrapped_text[1:]:
                             clean_table.append([" "*column_width, segment])
-                    else:
+                    else: # don't bother wrapping if the text is already small enough.
                         clean_table.append([clean0, clean1])
-                    clean_table.append(["",""])
-            current_table.clear()
+                    clean_table.append(["",""]) # add a blank line between each row for readability
+            current_table.clear() # we don't need the original table buffer anymore now that we've generated clean_table.
             print("first column width: "+str(column_width))
             print("table get!\n "+str(clean_table))
+            # Push our work into the final generated document. this looks ugly, and admittedly it really is.
+            # we're hardcoding the box characters and widths. we pulled the width of the first column earlier, so we use that
+            # to do math to decide where to place the table lines. string multiplation is used to place the lines down.
+            # Because of the direction the entry we inserted gets pushed when we insert another one, we have to put the table together from botton to top.
             coc.insert(table_start_index, "```\n")
             coc.insert(table_start_index, "└"+("─"*(column_width+2))+"┴"+("─"*(76-column_width))+"┘\n")
-            clean_table.reverse()
-            for idx, row in enumerate(clean_table):
+            clean_table.reverse() # The list is ordered for drawing top-to-bottom. we need to change that.
+            for idx, row in enumerate(clean_table): # draw in the actual table data.
                 if idx == len(clean_table)-1:        
                     coc.insert(table_start_index, "├"+("─"*(column_width+2))+"┼"+("─"*(76-column_width))+"┤\n")
                 coc.insert(table_start_index, "│ "+row[0]+(" "*(column_width-len(row[0])))+" │ "+row[1]+(" "*(75-(len(row[1])+column_width)))+"│\n")    
@@ -89,12 +97,11 @@ for index, line in enumerate(coc):
             coc[index] = line[0:2]+pattern.sub(lambda match: replacements[match.group(0)], line[2:])
             print(line)
 
-#TODO: Parse out tables, convert them to box-drawing ascii art
-
 # Stripped markdown should now be a valid gemtext document. 
 # Combine the processed document with the preformated heading and footings,
 # then save it to the coc page!
 gemtext = "".join(heading+coc+footing)
 #print(gemtext) 
 page = open("./allthingslinux.org/code-of-conduct.gmi", "w")
-page.write(gemtext)    
+page.write(gemtext)
+print("Page generated successfully!")
