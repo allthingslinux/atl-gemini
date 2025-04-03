@@ -1,4 +1,6 @@
-this repository contains a prototype gemini capsule for All Things Linux. until further notice, consider it licensed All Rights Reserved, though a license will be added if we decide to move forward with this as a project.
+this repository contains the full source for the All Things Linux gemini capsule, including scripts.
+
+The build_coc.py script can be used to generate the code of conduct page, requires the all things linux code of conduct submodule to be initialized.
 
 ##Setup instructions:
 1. Clone this repository
