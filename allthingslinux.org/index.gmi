@@ -17,6 +17,7 @@
 => https://discord.gg/linux All Things Linux Discord
 Join our server to make new friends, share your knowledge and learn.
 => gemini://allthingslinux.org/about.gmi About ATL
+=> gemini://allthingslinux.org/code-of-conduct.gmi Read our code of conduct
 
 ## See what our members are saying
 
