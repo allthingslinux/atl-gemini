@@ -2,31 +2,32 @@ import re
 import textwrap
 
 # Hardcoded header and footer to replace the html ones
-heading=[
-r'```'+"\n"
-r'  _____        __      ____  ___  _____             __         __ '+"\n"
-r' / ___/__  ___/ /__   / __ \/ _/ / ___/__  ___  ___/ /_ ______/ /_'+"\n"
-r'/ /__/ _ \/ _  / -_) / /_/ / _/ / /__/ _ \/ _ \/ _  / // / __/ __/'+"\n"
-r'\___/\___/\_,_/\__/  \____/_/   \___/\___/_//_/\_,_/\_,_/\__/\__/ '+"\n"
-r'```'+"\n"
-]
-footing=[
-    r'## Contributors'+"\n"
-    r'=> https://contrib.rocks Made with contrib.rocks'+"\n"
-    r'=> https://contrib.rocks/image?repo=allthingslinux/code-of-conduct Contributors'+"\n"
-]
+heading = r"""
+```
+  _____        __      ____  ___  _____             __         __
+ / ___/__  ___/ /__   / __ \/ _/ / ___/__  ___  ___/ /_ ______/ /_
+/ /__/ _ \/ _  / -_) / /_/ / _/ / /__/ _ \/ _ \/ _  / // / __/ __/
+\___/\___/\_,_/\__/  \____/_/   \___/\___/_//_/\_,_/\_,_/\__/\__/
+```
+"""
+
+footing = r"""
+## Contributors
+=> https://contrib.rocks Made with contrib.rocks
+=> https://contrib.rocks/image?repo=allthingslinux/code-of-conduct Contributors
+    """
 
 # Grab the file, then split it into a 2D list for ease of manipulation
 coc = open("./code-of-conduct/README.md").read().splitlines(True)
 
 # Find the end of the table of contents and delete everything up to that point
 tocend = coc.index("<!-- END doctoc generated TOC please keep comment here to allow auto update -->\n") + 2
-print("end of TOC found at line "+str(tocend)+", stripping toc and header")
+print(f"end of TOC found at line {str(tocend)}, stripping toc and header")
 del coc[0:tocend]
 
 # Find the beginning of the contributors section and chop it off
 contribstart = coc.index("## Contributors\n")
-print("Contributor block found at line "+str(contribstart)+", stripping out footing")
+print(f"Contributor block found at line {str(contribstart)}, stripping out footing")
 del coc[contribstart:]
 
 #set up a regex method to kill inline markdown
@@ -42,7 +43,7 @@ for index, line in enumerate(coc):
     if in_table:
         if line.startswith("|"): #if we're still in the table, move this line into the table buffer and iterate to the next.
             #strip inline markdown and the beginning of the table ("| ") from the line
-            cleanline = line[0:2]+pattern.sub(lambda match: replacements[match.group(0)], line[2:]) 
+            cleanline = f"{line[0:2]}{pattern.sub(lambda match: replacements[match.group(0)], line[2:])}" 
             current_table.append(cleanline[2:len(cleanline)-2].split(" | "))
         else:
             # We have the whole table! all done iterating!
@@ -64,43 +65,43 @@ for index, line in enumerate(coc):
                         clean_table.append([clean0, clean1])
                     clean_table.append(["",""]) # add a blank line between each row for readability
             current_table.clear() # we don't need the original table buffer anymore now that we've generated clean_table.
-            print("first column width: "+str(column_width))
-            print("table get!\n "+str(clean_table))
+            print(f"first column width: {str(column_width)}")
+            print(f"table get!\n {str(clean_table)}")
             # Push our work into the final generated document. this looks ugly, and admittedly it really is.
             # we're hardcoding the box characters and widths. we pulled the width of the first column earlier, so we use that
             # to do math to decide where to place the table lines. string multiplation is used to place the lines down.
             # Because of the direction the entry we inserted gets pushed when we insert another one, we have to put the table together from botton to top.
             coc.insert(table_start_index, "```\n")
-            coc.insert(table_start_index, "└"+("─"*(column_width+2))+"┴"+("─"*(76-column_width))+"┘\n")
+            coc.insert(table_start_index, f"└{("─"*(column_width+2))}┴{("─"*(76-column_width))}┘\n")
             clean_table.reverse() # The list is ordered for drawing top-to-bottom. we need to change that.
             for idx, row in enumerate(clean_table): # draw in the actual table data.
-                if idx == len(clean_table)-1:        
-                    coc.insert(table_start_index, "├"+("─"*(column_width+2))+"┼"+("─"*(76-column_width))+"┤\n")
-                coc.insert(table_start_index, "│ "+row[0]+(" "*(column_width-len(row[0])))+" │ "+row[1]+(" "*(75-(len(row[1])+column_width)))+"│\n")    
-            coc.insert(table_start_index, "┌"+("─"*(column_width+2))+"┬"+("─"*(76-column_width))+"┐\n")
+                if idx == len(clean_table)-1:
+                    coc.insert(table_start_index, f"├{("─"*(column_width+2))}┼{("─"*(76-column_width))}┤\n")
+                coc.insert(table_start_index, f"│ {row[0]+(" "*(column_width-len(row[0])))} │ {row[1]+(" "*(75-(len(row[1])+column_width)))}│\n")
+            coc.insert(table_start_index, f"┌{("─"*(column_width+2))}┬{("─"*(76-column_width))}┐\n")
             coc.insert(table_start_index, "```\n")
     else:    
         #Convert "- [label](url)" markdown link lines to "=> url label" gemtext links
         if line.startswith("- ["):
             link = line[1:].split("](")
-            coc[index] = '=> '+link[1].replace(")\n","")+' '+link[0].replace("- [","")+'\n'
+            coc[index] = f"=> {link[1].replace(")\n","")} {link[0].replace("- [","")}\n"
             print("Converting bullet-point-link to gemini link on line "+str(index)+":"+coc[index])
         elif line.startswith("|"):
             #activate the table parser, push first line into the table buffer
             in_table =           True
             table_start_index =  index
-            cleanline = line[0:2]+pattern.sub(lambda match: replacements[match.group(0)], line[2:])
+            cleanline = f"{line[0:2]}{pattern.sub(lambda match: replacements[match.group(0)], line[2:])}"
             current_table.append(cleanline[2:len(cleanline)-2].split(" | "))
         # If it's not a link, regex out all the inline mardown formatting
         else:
             print("stripping inline formatting from line "+str(index)+":")
-            coc[index] = line[0:2]+pattern.sub(lambda match: replacements[match.group(0)], line[2:])
+            coc[index] = f"{line[0:2]}{pattern.sub(lambda match: replacements[match.group(0)], line[2:])}"
             print(line)
 
 # Stripped markdown should now be a valid gemtext document. 
 # Combine the processed document with the preformated heading and footings,
 # then save it to the coc page!
-gemtext = "".join(heading+coc+footing)
+gemtext = f"{heading}{''.join(coc)}{footing}"
 #print(gemtext) 
 page = open("./allthingslinux.org/code-of-conduct.gmi", "w")
 page.write(gemtext)
