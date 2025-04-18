@@ -20,9 +20,13 @@ footing = r"""
 # width of the table in columns
 table_width: int = 80
 
-#set up a regex method to remove inline markdown
-inline_md_replacements = {"*":"","**":"","***":"","_":"","__":"","___":"",}
-inline_md_pattern = re.compile("|".join(re.escape(old) for old in inline_md_replacements))
+pipeline_config: dict = { 
+    "strip_inline_formatting": True,
+    "convert_bullet_point_links": True,
+    "format_unicode_tables": True,
+}
+
+
 
 
 
@@ -39,7 +43,7 @@ contrib_start = coc.index("## Contributors\n")
 print(f"Contributor block found at line {str(contrib_start)}, stripping out footing")
 del coc[contrib_start:]
 
-
+#TODO: re-write the table parser/formatter to make use of the pipeline approach rather than doing *this*
 def format_table(table: list, coc: list) -> None:
     clean_table = []
     column_width = max(len(column.strip()) for column in current_table[0])
@@ -69,35 +73,41 @@ def format_table(table: list, coc: list) -> None:
     coc.insert(table_start_index, f"┌{("─"*(column_width+2))}┬{("─"*((table_width - 3) - column_width))}┐\n")
     coc.insert(table_start_index, "```\n")
 
-def convert_links(line: str, index: int, coc:list) -> bool:
+# Line formatters
+
+def convert_links(line: str) -> str:
     #Convert "- [label](url)" markdown link lines to "=> url label" gemtext links
     if line.startswith("- ["):
         # strip the first 3 characters "- [" off the line, then break it in half at the ](
         link = line[3:].split("](")
         # Since we have to flip the fields around, we also need to strip the newline and add one at the end.
-        coc[index] = f"=> {link[1].replace(")\n","")} {link[0]}\n"
-        print("Converting bullet-point-link to gemini link on line "+str(index)+":"+coc[index])
-        return True
-    else:
-        return False
+        return f"=> {link[1].replace(")\n","")} {link[0]}\n"
+    return line
 
-def strip_inline_markdown_from_line(line: str, index: int, coc: list) -> None:
-    print("stripping inline formatting from line "+str(index)+":")
-    coc[index] = f"{line[0:2]}{inline_md_pattern.sub(lambda match: inline_md_replacements[match.group(0)], line[2:])}"
-    print(line)
+def strip_inline_markdown(line: str) -> str:
+    #set up a regex method to remove inline markdown
+    inline_md_replacements = {"*":"","**":"","***":"","_":"","__":"","___":"",}
+    inline_md_pattern = re.compile("|".join(re.escape(old) for old in inline_md_replacements))
+    # regex it all out
+    return f"{line[0:2]}{inline_md_pattern.sub(lambda match: inline_md_replacements[match.group(0)], line[2:])}"
 
 #Global registers for the iteration logic to use
 in_table = False        # switches iteration logic between normal and table modes
 current_table = []      # 2D list that's used to buffer the table data as it comes in
 table_start_index = 0   # point to delete from and then insert the new formatted table
 
-# The main iterator. this loop runs through each line of the input document and pushes the line either through formatter functions or into a table parser/formatter.
+# Main Iterator
+# this is the beating heart of this conversion script. it runs through each line and:
+# - runs the line through a line-formatting pipeline
+# - Pushes multi-line formatting types into a buffer to run through multi-line formatters
+
 for index, line in enumerate(coc):
+    line = strip_inline_markdown(line) if pipeline_config["strip_inline_formatting"] else line
+    line = convert_links(line) if pipeline_config["convert_bullet_point_links"] else line
     if in_table:
         if line.startswith("|"): #if we're still in the table, move this line into the table buffer and iterate to the next.
             #strip inline markdown and the beginning of the table ("| ") from the line
-            cleanline = f"{line[0:2]}{inline_md_pattern.sub(lambda match: inline_md_replacements[match.group(0)], line[2:])}" 
-            current_table.append(cleanline[2:len(cleanline)-2].split(" | "))
+            current_table.append(line[2:len(line)-2].split(" | "))
         else:
             # We have the whole table! all done iterating!
             in_table = False
@@ -109,11 +119,9 @@ for index, line in enumerate(coc):
             #activate the table parser, push first line into the table buffer
             in_table =           True
             table_start_index =  index
-            cleanline = f"{line[0:2]}{inline_md_pattern.sub(lambda match: inline_md_replacements[match.group(0)], line[2:])}"
-            current_table.append(cleanline[2:len(cleanline)-2].split(" | "))
-        strip_inline_markdown_from_line(line, index, coc)
-        convert_links(line, index, coc)
-        
+            current_table.append(line[2:len(line)-2].split(" | "))
+        coc[index] = line
+                
 # Stripped markdown should now be a valid gemtext document. 
 # Combine the processed document with the preformated heading and footings,
 # then save it to the coc page!
