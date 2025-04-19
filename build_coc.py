@@ -1,35 +1,34 @@
 import re
 import textwrap
+from pathlib import Path
 
-# Hardcoded header and footer to replace the html ones
-heading = r"""
+# TODO: make config dict redefinable with command line args
+config: dict = { 
+"heading": r"""
 ```
   _____        __      ____  ___  _____             __         __
  / ___/__  ___/ /__   / __ \/ _/ / ___/__  ___  ___/ /_ ______/ /_
 / /__/ _ \/ _  / -_) / /_/ / _/ / /__/ _ \/ _ \/ _  / // / __/ __/
 \___/\___/\_,_/\__/  \____/_/   \___/\___/_//_/\_,_/\_,_/\__/\__/
 ```
-"""
+""",
 
-footing = r"""
+"footing": r"""
 ## Contributors
 => https://contrib.rocks Made with contrib.rocks
 => https://contrib.rocks/image?repo=allthingslinux/code-of-conduct Contributors
-    """
-
-config: dict = { 
-    "strip_inline_formatting": True,
-    "convert_bullet_point_links": True,
-    "format_unicode_tables": True,
-    "preformatted_unicode_columns": 80,
+""",
+"strip_inline_formatting":      True,
+"convert_bullet_point_links":   True,
+"format_unicode_tables":        True,
+"input_path":                   Path("./code-of-conduct/README.md"),
+"output_path":                  Path("./allthingslinux.org/code-of-conduct.gmi"),
+"preformatted_unicode_columns": 80,
 }
 
-
-
-
-
 # Grab the file, then split it into a 2D list for ease of manipulation
-coc = open("./code-of-conduct/README.md").read().splitlines(True)
+with open(config["input_path"]) as f:
+    coc = f.readlines()
 
 # Find the end of the table of contents and delete everything up to that point
 toc_end = coc.index("<!-- END doctoc generated TOC please keep comment here to allow auto update -->\n") + 2
@@ -70,6 +69,12 @@ def format_table(multiline_buffer: list) -> list:
     return final_table
         
 # Line formatters
+def apply_line_formatters(line: str) -> str:
+    if config["strip_inline_formatting"]:
+        line = strip_inline_markdown(line)
+    if config["convert_bullet_point_links"]:
+        line = convert_links(line)
+    return line
 
 def convert_links(line: str) -> str:
     #Convert "- [label](url)" markdown link lines to "=> url label" gemtext links
@@ -97,8 +102,7 @@ output_doc:       list  = []     # The buffer for the final document
 # - runs the line through a line-formatting pipeline
 # - Pushes multi-line formatting types into a buffer to run through multi-line formatters
 for index, line in enumerate(coc):
-    line = strip_inline_markdown(line) if config["strip_inline_formatting"] else line
-    line = convert_links(line) if config["convert_bullet_point_links"] else line
+    line = apply_line_formatters(line)
     if format_multiline:
         if line.startswith("|"): 
             multiline_buffer.append(line)
@@ -115,11 +119,8 @@ for index, line in enumerate(coc):
         else:
             output_doc.append(line)
                 
-# Stripped markdown should now be a valid gemtext document. 
-# Combine the processed document with the preformated heading and footings,
-# then save it to the coc page!
-gemtext = f"{heading}{''.join(output_doc)}{footing}"
-#print(gemtext) 
-page = open("./allthingslinux.org/code-of-conduct.gmi", "w")
-page.write(gemtext)
+# Take the document we just built with the formatting pipeline, save it to the desired path
+gemtext = f"{config["heading"]}{''.join(output_doc)}{config["footing"]}"
+with open(config["output_path"], "w") as page:
+    page.write(gemtext)
 print("Page generated successfully!")
