@@ -17,13 +17,11 @@ footing = r"""
 => https://contrib.rocks/image?repo=allthingslinux/code-of-conduct Contributors
     """
 
-# width of the table in columns
-table_width: int = 80
-
-pipeline_config: dict = { 
+config: dict = { 
     "strip_inline_formatting": True,
     "convert_bullet_point_links": True,
     "format_unicode_tables": True,
+    "preformatted_unicode_columns": 80,
 }
 
 
@@ -43,11 +41,13 @@ contrib_start = coc.index("## Contributors\n")
 print(f"Contributor block found at line {str(contrib_start)}, stripping out footing")
 del coc[contrib_start:]
 
-#TODO: re-write the table parser/formatter to make use of the pipeline approach rather than doing *this*
-def format_table(table: list, coc: list) -> None:
+# multiline formatters
+def format_table(multiline_buffer: list) -> list:
+    table = [i[2:-2].split(" | ") for i in multiline_buffer]   # take the buffer and convert the table lines into a 2d list
+    table_width: int = config["preformatted_unicode_columns"]
     clean_table = []
-    column_width = max(len(column.strip()) for column in current_table[0])
-    for x, y in enumerate(current_table):               # strips the seperating line 
+    column_width = max(len(column.strip()) for column in table[0])
+    for x, y in enumerate(table):               # strips the seperating line 
         if not all( char == '-' for char in y[0]):      # Check if first column of row is all dashes. if it is, it's a seperator row and should be discarded.
             clean0 = y[0].strip() # Generate cleaned version of columns 0 and 1
             clean1 = y[1].strip()
@@ -56,23 +56,19 @@ def format_table(table: list, coc: list) -> None:
             for segment in wrapped_text[1:]:
                 clean_table.append([" "*column_width, segment])
             clean_table.append(["",""]) # add a blank line between each row for readability
-    current_table.clear() # we don't need the original table buffer anymore now that we've generated clean_table.
-    print(f"first column width: {str(column_width)}")
-    print(f"table get!\n {str(clean_table)}")
-    # Push our work into the final generated document. this looks ugly, and admittedly it really is.
-    # we're hardcoding the box characters and widths. we pulled the width of the first column earlier, so we use that
-    # to do math to decide where to place the table lines. string multiplation is used to place the lines down.
-    # Because of the direction the entry we inserted gets pushed when we insert another one, we have to put the table together from botton to top.
-    coc.insert(table_start_index, "```\n")
-    coc.insert(table_start_index, f"└{("─"*(column_width+2))}┴{("─"*((table_width - 3 )-column_width))}┘\n")
-    clean_table.reverse() # The list is ordered for drawing top-to-bottom. we need to change that.
-    for idx, row in enumerate(clean_table): # draw in the actual table data.
-        if idx == len(clean_table)-1:
-            coc.insert(table_start_index, f"├{("─"*(column_width+2))}┼{("─"*((table_width - 3) - column_width))}┤\n")
-        coc.insert(table_start_index, f"│ {row[0]+(" "*(column_width-len(row[0])))} │ {row[1]+(" "*((table_width - 4) - (len(row[1])+column_width)))}│\n")
-    coc.insert(table_start_index, f"┌{("─"*(column_width+2))}┬{("─"*((table_width - 3) - column_width))}┐\n")
-    coc.insert(table_start_index, "```\n")
-
+    
+    final_table = [
+        "```\n",
+        f"┌{'─'*(column_width+2)}┬{'─'*((table_width - 3) - column_width)}┐\n",
+        *[
+            f"├{'─'*(column_width+2)}┼{'─'*((table_width - 3) - column_width)}┤\n" if idx == 1 else "" +
+            f"│ {row[0] + ' '*(column_width - len(row[0]))} │ {row[1] + ' '*((table_width - 4) - (len(row[1]) + column_width))}│\n"
+            for idx, row in enumerate(clean_table)
+        ],
+        f"└{'─'*(column_width+2)}┴{'─'*((table_width - 3) - column_width)}┘\n```\n"
+    ]
+    return final_table
+        
 # Line formatters
 
 def convert_links(line: str) -> str:
@@ -92,40 +88,37 @@ def strip_inline_markdown(line: str) -> str:
     return f"{line[0:2]}{inline_md_pattern.sub(lambda match: inline_md_replacements[match.group(0)], line[2:])}"
 
 #Global registers for the iteration logic to use
-in_table = False        # switches iteration logic between normal and table modes
-current_table = []      # 2D list that's used to buffer the table data as it comes in
-table_start_index = 0   # point to delete from and then insert the new formatted table
+format_multiline: bool  = False  # switches iteration logic between single and multiple line formatter modes
+multiline_buffer: list  = []     # 2D list that's used to buffer multiline formatting
+output_doc:       list  = []     # The buffer for the final document
 
 # Main Iterator
 # this is the beating heart of this conversion script. it runs through each line and:
 # - runs the line through a line-formatting pipeline
 # - Pushes multi-line formatting types into a buffer to run through multi-line formatters
-
 for index, line in enumerate(coc):
-    line = strip_inline_markdown(line) if pipeline_config["strip_inline_formatting"] else line
-    line = convert_links(line) if pipeline_config["convert_bullet_point_links"] else line
-    if in_table:
-        if line.startswith("|"): #if we're still in the table, move this line into the table buffer and iterate to the next.
-            #strip inline markdown and the beginning of the table ("| ") from the line
-            current_table.append(line[2:len(line)-2].split(" | "))
+    line = strip_inline_markdown(line) if config["strip_inline_formatting"] else line
+    line = convert_links(line) if config["convert_bullet_point_links"] else line
+    if format_multiline:
+        if line.startswith("|"): 
+            multiline_buffer.append(line)
         else:
-            # We have the whole table! all done iterating!
-            in_table = False
-            # Remove the unformatted section from the document. the formatter will reinsert it at the end.
-            del coc[table_start_index:(table_start_index+len(current_table))]   
-            format_table(current_table, coc)
+            # We're done building the multi-line buffer, format it and push it to the final doc!
+            format_multiline = False
+            multiline_buffer = format_table(multiline_buffer) if config["format_unicode_tables"] else multiline_buffer
+            output_doc += multiline_buffer # append the formatted buffer to the document
+            multiline_buffer.clear()
     else:
         if line.startswith("|"):
-            #activate the table parser, push first line into the table buffer
-            in_table =           True
-            table_start_index =  index
-            current_table.append(line[2:len(line)-2].split(" | "))
-        coc[index] = line
+            format_multiline = True
+            multiline_buffer.append(line)
+        else:
+            output_doc.append(line)
                 
 # Stripped markdown should now be a valid gemtext document. 
 # Combine the processed document with the preformated heading and footings,
 # then save it to the coc page!
-gemtext = f"{heading}{''.join(coc)}{footing}"
+gemtext = f"{heading}{''.join(output_doc)}{footing}"
 #print(gemtext) 
 page = open("./allthingslinux.org/code-of-conduct.gmi", "w")
 page.write(gemtext)
