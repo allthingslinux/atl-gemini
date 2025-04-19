@@ -1,8 +1,9 @@
 ## Converter script
-- move it from a turing-machine grab line and overwrite approach to a configurable pipeline
 - generalize it to work with any markdown document, not just the code of conduct
 - add inline link handling
 - add support for formatting mdx
+- work on config handling and multiple files/directories
+- brand the scg (static capsule generation) framework as ChandraGen, split it off into its own repository when its ready and set up as a submodule
 
 ## pages
 - make the allthingslinux.org homepage randomize the testimonial section with a cgi script instead of being static
