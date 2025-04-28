@@ -1,6 +1,6 @@
 this repository contains the full source for the All Things Linux gemini capsule, including scripts.
 
-The build_coc.py script can be used to generate the code of conduct page, requires the all things linux code of conduct submodule to be initialized.
+ChandraGen is used to generate the code-of-conduct and blog pages dynamically, updating them as changes roll in.
 
 ##Setup instructions:
 1. Clone this repository
