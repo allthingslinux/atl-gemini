@@ -4,3 +4,9 @@
 [submodule "code-of-conduct"]
 	path = code-of-conduct
 	url = https://github.com/allthingslinux/code-of-conduct
+[submodule "chandragen"]
+	path = chandragen
+	url = https://github.com/thanosengine/chandragen
+[submodule "allthingslinux"]
+	path = allthingslinux
+	url = https://github.com/allthingslinux/allthingslinux

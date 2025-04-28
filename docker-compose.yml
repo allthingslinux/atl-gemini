@@ -8,3 +8,13 @@ services:
       - ./atl.tools:/gemroots/atl.tools
       - ./gemserv:/gemserv
       - ./certs:/certs
+  chandragen:
+    build: ./chandragen
+    command: ["/config/config.toml"]
+    volumes:
+      - ./chandra_plugins:/plugins
+      - ./code-ofconduct:/source/code-of-conduct
+      - ./allthingslinux:/source/allthingslinux
+      - ./allthingslinux.org:/gemroots/allthingslinux.org
+      - ./atl.tools:/gemroots/atl.tools
+      - ./chandra_config:/config/
